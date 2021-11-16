@@ -2,6 +2,6 @@
 # RelogiosVetoriais_C
 Base para a implementação de relógios vetoriais em C
 
-##Integrantes:  
+## Integrantes:  
 .Itallo Pacheco Santana Santos
 .Lucas Carvalho Gomes Santiago
