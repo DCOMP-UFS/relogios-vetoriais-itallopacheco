@@ -5,6 +5,9 @@
  * 
  * https://people.cs.rutgers.edu/~pxk/417/notes/images/clocks-vector.png
  * 
+ * Alunos: 
+ * Itallo Pacheco Santana Santos
+ * Lucas Carvalho Gomes Santiago 
  * Compilação: mpicc -o rvet rvet.c
  * Execução:   mpiexec -n 3 ./rvet
  */
