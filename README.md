@@ -5,3 +5,4 @@ Base para a implementação de relógios vetoriais em C
 ## Integrantes:  
 .Itallo Pacheco Santana Santos
 .Lucas Carvalho Gomes Santiago
+.Luan Melo Guimarães
