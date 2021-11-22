@@ -7,7 +7,9 @@
  * 
  * Alunos: 
  * Itallo Pacheco Santana Santos
+ * Luan Melo Guimarães
  * Lucas Carvalho Gomes Santiago 
+ * 
  * Compilação: mpicc -o rvet rvet.c
  * Execução:   mpiexec -n 3 ./rvet
  */
