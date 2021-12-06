@@ -10,8 +10,8 @@
  * Luan Melo Guimarães
  * Lucas Carvalho Gomes Santiago 
  * 
- * Compilação: mpicc -lpthrad -o rvet rvet.c
- * Execução:   mpiexec -n 3 ./rvet
+ * Compilação: mpicc -o filaOUT filaOUT.c
+ * Execução:   mpiexec -n 3 ./filaOUT
  * 
  * 
  * TODO: > função snapshot
@@ -24,6 +24,11 @@
 #include <mpi.h>     
 #include <pthread.h>
 
+int const FILA_MAX = 50;
+int primeiro;
+int ultimo;
+
+
 typedef struct Clock { 
    int p[3];
 } Clock;
@@ -32,15 +37,6 @@ typedef struct Clock {
 void Event(int pid, Clock *clock){
    clock->p[pid]++;   
    printf("[E] Process: %d, Clock: (%d, %d, %d)\n", pid, clock->p[0], clock->p[1], clock->p[2]);
-}
-
-void *snap(void* Clock); // indico a func q vai ser usada no 
-
-void Snapshot(int pid, Clock *clock){  
-   
-   pthread_t t1;
-   pthread_create(&t1, NULL, snap, (void*) clock);
-   pthread_join(t1, NULL);
 }
 
 
@@ -83,15 +79,15 @@ void process0(){
    Clock clock = {{0,0,0}};
    printf("[ ] Process: %d, Clock: (%d, %d, %d)\n", 0, clock.p[0], clock.p[1], clock.p[2]);
    
+   /*
    Event(0, &clock); // operacao a
    Send(0, 1, &clock); //operacao b
-   Snapshot(0, &clock);
    Receive(1, 0, &clock);// operacao c
    Send(0, 2, &clock); // operacao d 
    Receive(2, 0, &clock); // operacao e
    Send(0, 1, &clock); // operacao f 
    Event(0, &clock); // operacao g
-   
+   */
 }
 
 // Representa o processo de rank 1
@@ -99,23 +95,25 @@ void process1(){
    Clock clock = {{0,0,0}};
    printf("[ ] Process: %d, Clock: (%d, %d, %d)\n", 1, clock.p[0], clock.p[1], clock.p[2]);
    
+   /*
    Send(1, 0, &clock); // operacao h
    Receive(0, 1, &clock); // operacao i
    Receive(0, 1, &clock); // operacao j
    // TO DO
-   
+   */
 }
 
 // Representa o processo de rank 2
 void process2(){
    Clock clock = {{0,0,0}};
    printf("[ ] Process: %d, Clock: (%d, %d, %d)\n", 2, clock.p[0], clock.p[1], clock.p[2]);
-   
+   /*
    Event(2, &clock); // operacao k
    Send(2, 0, &clock); // operacao l
    Receive(0, 2, &clock); // operacao m
 
    // TO DO
+   */
 }
 
 int main(void) {
@@ -139,19 +137,3 @@ int main(void) {
 }  /* main */
 
 
-void *snap(void* relogio) {
-   struct Clock *clk = (struct Clock*) relogio;
-   
-   int copia[3];
-   for(int i = 0 ; i < 3; i++){
-      copia[i] = clk->p[i];
-   }
-   
-   
-   
-   
-   printf("[SNAP] Clock:(%d,%d,%d) \n", copia[0], copia[1], copia[2]);
-   
-
-   return NULL;
-}  /* Hello */
