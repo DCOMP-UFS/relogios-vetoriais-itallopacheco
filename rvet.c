@@ -10,8 +10,11 @@
  * Luan Melo Guimarães
  * Lucas Carvalho Gomes Santiago 
  * 
+<<<<<<< HEAD
  * Compilação: mpicc -lpthrad -o rvet rvet.c
- * Execução:   mpiexec -n 3 ./rvet
+=======
+>>>>>>> 9d607cdc543a197fde494cbe964809888c2a1f93
+ * Execução:   mpiexec -n 3 rvet
  * 
  * 
  * TODO: > função snapshot

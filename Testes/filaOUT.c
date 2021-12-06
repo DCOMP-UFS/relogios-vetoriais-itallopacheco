@@ -34,6 +34,19 @@ typedef struct Clock {
 } Clock;
 
 
+void IniciaFila {
+   primeiro = 0;
+   ultimo = -1;
+}
+
+bool FilaVazia {
+   return primeiro > ultimo;
+}
+
+bool FilaCheia {
+   ultimo == FILA_MAX -1;
+}
+
 void Event(int pid, Clock *clock){
    clock->p[pid]++;   
    printf("[E] Process: %d, Clock: (%d, %d, %d)\n", pid, clock->p[0], clock->p[1], clock->p[2]);
