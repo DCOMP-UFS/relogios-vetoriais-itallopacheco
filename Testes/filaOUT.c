@@ -10,7 +10,7 @@
  * Luan Melo Guimarães
  * Lucas Carvalho Gomes Santiago 
  * 
- * Compilação: mpicc -o filaOUT filaOUT.c
+ * Compilação: mpicc -lpthread -o filaOUT filaOUT.c
  * Execução:   mpiexec -n 3 ./filaOUT
  * 
  * 
@@ -20,32 +20,23 @@
  */
  
 #include <stdio.h>
-#include <string.h>  
-#include <mpi.h>     
+#include <stdlib.h>
 #include <pthread.h>
+#include <string.h>  
+#include <unistd.h>
+#include <time.h>
+#include <mpi.h>  
 
-int const FILA_MAX = 50;
-int primeiro;
-int ultimo;
+
+#define THREAD_NUM 2
 
 
 typedef struct Clock { 
    int p[3];
 } Clock;
 
-
-void IniciaFila {
-   primeiro = 0;
-   ultimo = -1;
-}
-
-bool FilaVazia {
-   return primeiro > ultimo;
-}
-
-bool FilaCheia {
-   ultimo == FILA_MAX -1;
-}
+int buffer[10];
+int count = 0;
 
 void Event(int pid, Clock *clock){
    clock->p[pid]++;   
@@ -87,10 +78,61 @@ void Receive(int pidS ,int pidR, Clock *clock){
 }
 
 
+
+void *producer (void* args){
+   
+   int x = rand(); 
+   
+   buffer[count] = x;
+   count ++;
+   
+}
+
+void *consumer (void* args){
+   
+   int y = buffer[count - 1];
+   count--;
+   
+   printf("Got %d\n", y);
+}
+
+
+void threads() {
+   pthread_t th[THREAD_NUM];
+   int i;
+   for(i=0; i < THREAD_NUM ; i++){
+      if(i % 2 == 0){
+         if(pthread_create(&th[i], NULL, &producer, NULL) != 0){
+            perror("Falha ao criar thread");
+         }
+      } else {
+         if(pthread_create(&th[i],NULL, &consumer, NULL) != 0){
+            perror("Falha ao criar thread");
+         }
+      }
+   }
+   for(i=0 ; i < THREAD_NUM; i++) {
+      if(pthread_join(th[i],NULL) != 0){
+         perror("Falha ao dar join na thread");
+      }
+   }
+   
+}
+
+
+
+
 // Representa o processo de rank 0
 void process0(){
+   
+   srand(time(NULL));
+   
+   
+   threads(); // cria as 3 threads 
+   
    Clock clock = {{0,0,0}};
-   printf("[ ] Process: %d, Clock: (%d, %d, %d)\n", 0, clock.p[0], clock.p[1], clock.p[2]);
+  // printf("[ ] Process: %d, Clock: (%d, %d, %d)\n", 0, clock.p[0], clock.p[1], clock.p[2]);
+   
    
    /*
    Event(0, &clock); // operacao a
@@ -106,7 +148,7 @@ void process0(){
 // Representa o processo de rank 1
 void process1(){
    Clock clock = {{0,0,0}};
-   printf("[ ] Process: %d, Clock: (%d, %d, %d)\n", 1, clock.p[0], clock.p[1], clock.p[2]);
+ //  printf("[ ] Process: %d, Clock: (%d, %d, %d)\n", 1, clock.p[0], clock.p[1], clock.p[2]);
    
    /*
    Send(1, 0, &clock); // operacao h
@@ -119,7 +161,7 @@ void process1(){
 // Representa o processo de rank 2
 void process2(){
    Clock clock = {{0,0,0}};
-   printf("[ ] Process: %d, Clock: (%d, %d, %d)\n", 2, clock.p[0], clock.p[1], clock.p[2]);
+  // printf("[ ] Process: %d, Clock: (%d, %d, %d)\n", 2, clock.p[0], clock.p[1], clock.p[2]);
    /*
    Event(2, &clock); // operacao k
    Send(2, 0, &clock); // operacao l
@@ -130,6 +172,7 @@ void process2(){
 }
 
 int main(void) {
+   
    int my_rank;               
 
    MPI_Init(NULL, NULL); 
